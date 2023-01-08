@@ -146,7 +146,24 @@ de `echo` spanning op het ultra-soon bordje gedeeld met de 3 1kOhm weerstandjes.
 
 ### Software schrijven
 
+```python
+#!/usr/bin/python3
 
+import PRi.GPIO as GPIO
+from time import sleep, time
+
+PIN_TRIGGER = 7
+PIN_ECHO = 11
+HALVE_GELUIDSSNELHEID = 17150
+
+try:
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(PIN_TRIGGER, GPIO.OUT)
+    GPIO.setup(PIN_ECHO, GPIO.IN)
+
+finally:
+    GPIO.cleanup()
+```
 
 ## Bron
 
