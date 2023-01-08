@@ -33,11 +33,13 @@ computer opstart.
 De Raspberry Pi's die we gebruiken zijn al wat ouder en daardoor niet zo snel. We gebruiken daarom de internet
 browser niet, maar werken alleen met editor **MousePad** en de terminal.
 
+![Mousepad en LXTerminal](screenshot_dietpi_mousepad_LXTerminal.jpg)
+
 Met MousePad maken we de *.py bestanden met daarin de code.
 Vervolgens voeren we die uit in de terminal met het commando:
 
 ```bash
-python3 script.py
+sudo python3 <scriptnaam>.py
 ```
 
 ## Een LED aansturen
@@ -58,7 +60,31 @@ python3 script.py
 
 ## Afstandssensor
 
+### Aansluiten
+
+Met een ultrasone sensor kun je de afstand tot bijvoorbeeld je hand meten. In dit deel van de instructie gaan de sensor 
+aansluiten op de Pi en er software voor schrijven om uiteindelijk de afstand in centimeters te kunnen weergeven.
+
+In onderstaande schema vind je de componenten en hoe je ze moet aansluiten.
+
 ![afstandssensor op Pi](distance%20sensor%20on%20pi_bb.png)
 
+De weerstandjes zijn allemaal 1kOhm met kleurtjes bruin-zwart-rood. 
+
+De ultra-soon sensor wordt gevoed vanuit 5Vdc, maar de IO-pinnen van de Pi ondersteunen maximaal 3.3Vdc. Daarom wordt
+de `echo` spanning op het ultra-soon bordje gedeeld met de 3 1kOhm weerstandjes.
+
+### Software schrijven
+
+
+
+## Bron
+
+Deze instructie is gebaseerd op het [werk](https://mjrobot.org/rpi-gpiozero/) van Marcelo Rovai en de 
+[instructie](https://pimylifeup.com/raspberry-pi-distance-sensor/) van 
+Gus van [PiMyLifeUp](https://pimylifeup.com/).
+
+- https://mjrobot.org/rpi-gpiozero/
+- https://pimylifeup.com/
 
 {{< licentie rel="http://creativecommons.org/licenses/by-nc-sa/4.0/">}}
