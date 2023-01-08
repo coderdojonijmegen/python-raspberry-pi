@@ -160,7 +160,29 @@ try:
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(PIN_TRIGGER, GPIO.OUT)
     GPIO.setup(PIN_ECHO, GPIO.IN)
-
+    
+    print("wacht 2 seconden tot de sensor stabiel is")
+    sleep(2)
+    
+    while True:
+        print("maak puls")
+        print("start een klok zodra het begin van de echo wordt gemeten")
+        
+        GPIO.output(PIN_TRIGGER, GPIO.HIGH)
+        sleep(0.00001)
+        GPIO.output(PIN_TRIGGER, GPIO.LOW)
+        
+        while GPIO.input(PIN_ECHO) == 0:
+            puls_start_tijd = time()
+            
+        while GPIO.input(PIN_ECHO) == 1:
+            puls_eind_tijd = time()
+        
+        print("stop de klok als de echo voorbij is")
+        puls_duur = puls_eind_tijd - puls_start_tijd
+        afstand = round(puls_duur * HALVE_GELUIDSSNELHEID, 2)
+        print(f"gemeten afstand: {afstand}cm\n\n")
+        sleep(1)
 finally:
     GPIO.cleanup()
 ```
