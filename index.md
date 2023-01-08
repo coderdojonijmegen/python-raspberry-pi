@@ -43,14 +43,84 @@ sudo python3 <scriptnaam>.py
 ```
 
 ## Een LED aansturen
+We gaan beginnen met het aanzetten van een led lampje met de Raspberry Pi. Hiervoor hebben we nodig:
+
+1. Een led lampje
+2. Een weerstandje (330 ohms)
+3. Een paar draadjes
+4. Een breadboard
+
+#
+
+We gaan nu eerst de draadjes aansluiten, hoe dat moet is te zien op de afbeelding hieronder. We verbinden de 3.3 volt aansluiting op de Raspberry pi met de onderste rij op het breadboard. We verbinden de GROUND met de rij erboven op het breadboard. Daarna pluggen we de weerstand en het ledje in zoals het op de afbeelding staat. Als laatste verbinden we het weerstand en het ledje met de rijen op het breadboard, en het bruine draadje naar de controller pin op de raspberry pi. 
+#
+De pins op de afbeelding zijn hetzelfde als op jouw Raspberry Pi, je kan dus tellen waar de draadjes moeten!
 
 ![LED op Pi](LED%20on%20Pi_bb.png)
 
-## Een LED met een schakelaar
+Het led lampje gaat nu nog niet branden, dat komt omdat het circuit nog niet compleet is. We hebben net de led aangesloten op de GND en op de controller pin met het bruine draadje. Om het circuit compleet te maken en het ledje aan te laten gaan moeten we de controller pin aanzetten. De pin die wij hebben gebruikt heet: pin 18. We moeten dus met code pin 18 gaan aanzetten. Dit gaan we doen met python als volgt:
 
+```python
+from gpiozero import LED
+led = LED(18)
+led.on()
+```
+
+Zoals je kan zien is dit heel simpel. Eerst importeren we de code (gpiozero) om de pin te besturen. Hierna zeggen we dat er een ledje zit op pin 18 met de regel code: LED(18). En daarna zetten we deze led aan. Start het script met: 
+
+```bash
+python3 script.py
+```
+
+Het ledje zou nu moeten aangaan.
+#
+#
+We kunnen het ledje laten knipperen door de code in ons script te vervangen met:
+
+```python
+from gpiozero import LED
+from time import sleep
+led = LED(18)
+while True:
+    led.on()
+    sleep(1)
+    led.off()
+    sleep(1)
+```
+
+Dit werkt door de led steeds aan en uit te zetten, en het programma te laten pauzeren tussendoor met sleep(1). Door het getal hier aan te passen kan je het sneller of langzamer laten knipperen. Probeer bijvoorbeeld sleep(5) uit!
+## Een LED met een schakelaar
+De volgende stap is het toevoegen van een echte knop om de LED mee te bedienen. Hiervoor moeten we eerst het onderstaande circuit nabouwen. Dit circuit is al wat lastiger, vraag om hulp als je het nodig hebt!
+#
 ![LED en schakelaar op Pi](LED%20and%20switch%20on%20Pi_bb.png)
 
+De knop is aangesloten op pin 2 (met het gele draadje op de afbeelding). Als je de knop indrukt is het circuit compleet en staat er spanning op pin 2. Dit kunnen wij uitlezen met python:
+
+```python
+from gpiozero import Button
+button = Button(2)
+while True: 
+    if button.is_pressed: 
+        print("Button is pressed") 
+    else:
+        print("Button is not pressed")
+```
+
+Dit script laat wat op je scherm zien als je de knop indrukt. Net zoals eerst vertellen we dat er een knop op pin 2 zit met de regel: Button(2). 
+De led doet het nu niet meer, deze sturen we namelijk niet maar aan in het script. We combineren nu ons script van net met dit script:
+
+```python
+from gpiozero import LED, Button
+from signal import pause
+led = LED(18)
+button = Button(2)
+button.when_pressed = led.on
+button.when_released = led.off
+pause()
+```
+
 ## Bewegingssensor en buzzer
+
 
 ![bewegingssensor en buzzer op Pi](Motion%20and%20buzzer%20on%20Pi_bb.png)
 
