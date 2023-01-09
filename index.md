@@ -146,6 +146,10 @@ de `echo` spanning op het ultra-soon bordje gedeeld met de 3 1kOhm weerstandjes.
 
 ### Software schrijven
 
+De code voor het gebruik van de afstandssensor is niet makkelijk in stukken op te bouwen. Daarom vind je hieronder
+de gehele code ineens.  
+Onder de code vind je uitleg van verschillende delen.
+
 ```python
 #!/usr/bin/python3
 
@@ -154,7 +158,7 @@ from time import sleep, time
 
 PIN_TRIGGER = 7
 PIN_ECHO = 11
-HALVE_GELUIDSSNELHEID = 17150
+GELUIDSSNELHEID = 34300
 
 try:
     GPIO.setmode(GPIO.BOARD)
@@ -164,27 +168,105 @@ try:
     print("wacht 2 seconden tot de sensor stabiel is")
     sleep(2)
     
-    while True:
-        print("maak puls")
-        print("start een klok zodra het begin van de echo wordt gemeten")
+    print("maak puls")
+    print("start een klok zodra het begin van de echo wordt gemeten")
+    
+    GPIO.output(PIN_TRIGGER, GPIO.HIGH)
+    sleep(0.00001)
+    GPIO.output(PIN_TRIGGER, GPIO.LOW)
+    
+    while GPIO.input(PIN_ECHO) == 0:
+        puls_start_tijd = time()
         
-        GPIO.output(PIN_TRIGGER, GPIO.HIGH)
-        sleep(0.00001)
-        GPIO.output(PIN_TRIGGER, GPIO.LOW)
-        
-        while GPIO.input(PIN_ECHO) == 0:
-            puls_start_tijd = time()
-            
-        while GPIO.input(PIN_ECHO) == 1:
-            puls_eind_tijd = time()
-        
-        print("stop de klok als de echo voorbij is")
-        puls_duur = puls_eind_tijd - puls_start_tijd
-        afstand = round(puls_duur * HALVE_GELUIDSSNELHEID, 2)
-        print(f"gemeten afstand: {afstand}cm\n\n")
-        sleep(1)
+    while GPIO.input(PIN_ECHO) == 1:
+        puls_eind_tijd = time()
+    
+    print("stop de klok als de echo voorbij is")
+    puls_duur = puls_eind_tijd - puls_start_tijd
+    afstand = round(puls_duur * GELUIDSSNELHEID / 2, 2)
+    print(f"gemeten afstand: {afstand}cm\n\n")
 finally:
     GPIO.cleanup()
+```
+
+#### Input/Output pinnen gebruiken
+
+Op de Rasberry Pi zitten 2 rijen met pinnetjes waar je van alles op aan kunt sluiten. In deze code gebruiken we alleen
+I/O-pinnen. Ofwel, ze kunnen geen spanning (0) of de maximale spanning (1) uitsturen. En ook kunnen ze alleen maar meten
+of de spanning 0V (0) of maximaal 3.3V (1) is.
+
+De pinnen zijn instelbaar op verschillende manieren, dus als je ze wilt gebruiken, zul je de juiste instelling
+moeten doen:
+
+* de software voor het gebruik van de I/O-pinnen importeren:
+```python
+import PRi.GPIO as GPIO
+```
+* pin nummering modus
+```python
+GPIO.setmode(GPIO.BOARD)
+```
+Bij `GPIO.BOARD` komen de pin nummers in code overeen met die van de header op het bordje. Voor de andere modus 
+`GPIO.BCM` komen de nummers overeen met die van de chip die wordt gebruikt. Dat is een stuk lastiger, dus we gebruiken 
+`GPIO.BOARD`.
+* de gebruikte pinnen instellen
+```python
+GPIO.setup(PIN_TRIGGER, GPIO.OUT)
+GPIO.setup(PIN_ECHO, GPIO.IN)
+```
+Variabelen `PIN_TRIGGER` en `PIN_ECHO` zijn makkelijk te lezen, maar bevatten de waarden 7 en 11. Ofwel pin 7 en 11.  
+`PIN_TRIGGER` wordt ingesteld als output met `GPIO.OUT` en kan dus een spanning van 0V of 3.3V leveren.  
+`PIN_ECHO` wordt gebruikt als input met `GPIO.IN` en kan juist meten of het signaal hoog of laag is.
+* `PIN_TRIGGER` hoog of laag zetten
+```python
+GPIO.output(PIN_TRIGGER, GPIO.HIGH)
+GPIO.output(PIN_TRIGGER, GPIO.LOW)
+```
+Met `GPIO.HIGH` of `GPIO.LOW` kun je pin `PIN_TRIGGER` hoog of laag zetten.
+* `PIN_ECHO` uitlezen
+```python
+pin_waarde = GPIO.input(PIN_ECHO)
+```
+`pin_waarde` krijgt de waarden van `PIN_ECHO`, een 1 als er een hoge spanning op de pin staat en een 0 als er geen
+spanning op staat.
+* pin instellingen weer terugzetten
+```python
+GPIO.cleanup()
+```
+
+#### Hoe werkt het afstand meten eigenlijk?
+
+Met dit stukje code laat je de sensor een ultra-soon signaal maken. 
+```python
+GPIO.output(PIN_TRIGGER, GPIO.HIGH)
+sleep(0.00001)
+GPIO.output(PIN_TRIGGER, GPIO.LOW)
+```
+De duur van het `echo`-signaal van de sensor is een maat voor de duur van de echo en daarmee van de afstand. Hoe groter
+de afstand is, hoe langer de echo duurt en daarmee het `echo`-signaal op `PIN_ECHO`.  
+Met de volgende code kunnen we meten hoe lang het `echo`-signaal duurt:
+```python
+while GPIO.input(PIN_ECHO) == 0:
+    puls_start_tijd = time()
+    
+while GPIO.input(PIN_ECHO) == 1:
+    puls_eind_tijd = time()
+
+```
+Het eerste stukje wacht tot het begin van het `echo`-signaal begint. 
+Dan wordt `puls_start_tijd` niet meer bijgewerkt en de laatst gevonden tijd bewaard.  
+De volgende `while` wordt dan uitgevoerd en als het `echo`-signaal stop, wordt de `puls_eind_tijd` bewaard.  
+
+Door nu `puls_start_tijd` van `puls_eind_tijd` af te trekken, weet je hoe lang de echo duurde. De snelheid van ultra-soon
+geluid is 34300 cm/s. Het geluid gaat van de sensor naar het object en dan weer terug, dus de afstand is gelijk aan:
+
+```
+afstand = snelheid ultra-soon geluid * duur echo / 2
+```
+Omdat het geluid heen-en-weer gaat, wordt het resultaat door 2 gedeeld:
+```python
+puls_duur = puls_eind_tijd - puls_start_tijd
+afstand = round(puls_duur * GELUIDSSNELHEID / 2, 2)
 ```
 
 ## Bron
