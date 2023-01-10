@@ -120,13 +120,108 @@ pause()
 ```
 
 ## Bewegingssensor en buzzer
+Behalve de led en knop zijn er natuurlijk veel meer apparaten die we kunnen aansluiten op een Raspberry PI. We kunnen bijvoorbeeld een buzzer (een simpele speaker) en een bewegingssensor gebruiken om een simpel alarm te bouwen. 
+Als het alarm iemand ziet bewegen gaat het af!
 
+#
+Net zoals eerst bouwen we eerst het circuit op de foto na, let goed op dat alle draadjes op de juiste plek zitten!
 
 ![bewegingssensor en buzzer op Pi](Motion%20and%20buzzer%20on%20Pi_bb.png)
 
+Het werkt als volgt: als de bewegingssensor iets ziet bewegen, geeft deze een stroompje af op het draadje dat we hebben aangesloten op de pins op de Raspberry Pi. Dit stroompje kunnen wij detecteren met onze code, en vervolgens kunnen we de buzzer geluid laten maken door stroom te zetten op de pin waar de buzzer op is aangesloten.
+<br/>
+Om het alarm nog effectiever te maken kunnen we ook de led laten knipperen.
+<br/><br/>
+We kunnen de bewegingssensor als volgt gebruiken in de code:
+
+```python
+from gpiozero import MotionSensor
+pir = MotionSensor(23)
+pir.wait_for_motion()
+print("Motion detected!")
+```
+
+Herken je hoe we code schrijven? Het is hetzelfde als in de vorige voorbeelden. Deze keer zit de bewegingssensor (MotionSensor) aangesloten op pin 23. 
+<br/>
+Dit scriptje print "Motion detected!" als de sensor iets ziet bewegen.
+<br/><br/>
+We gaan nu deze code combineren met onze code om de led aan te sturen, ook passen we dit toe op de buzzer. Het resultaat is als volgt:
+
+```python
+from gpiozero import MotionSensor, Buzzer, LED
+import time
+pir = MotionSensor(23)
+bz = Buzzer(24)
+led = LED(18)
+print("Waiting for PIR to settle")
+pir.wait_for_no_motion()
+while True:
+    led.off()
+    print("Ready")
+    pir.wait_for_motion()
+    led.on()
+    print("Motion detected!")
+    bz.beep(0.5, 0.25, 8)
+    time.sleep(3)
+```
+
+Snap je hoe het werkt? Probeer eens wat waardes aan te passen
+
 ## Stappenmotor
 
+We hebben nu al een led, knop, sensor en buzzer aangesloten. Het volgende onderdeel is natuurlijk een motor. We gaan een zogeheten stappenmotor aansluiten op de sensor. 
+</br></br>
+Het aansturen van een motor is wat ingewikkelder dan de andere onderdelen. Dat is ook logisch, want een ledje of of buzzer kan alleen aan of uit. Een motor kan echter 2 kanten op bewegen, met verschillende snelheden.  
+</br> Gelukkig hebben we daarom een apart circuitje om ons daarmee te helpen. We gaan weer het circuitje nabouwen op de foto! 
 ![stappenmotor op Pi](stepper%20motor%20on%20Pi_bb.png)
+
+Zoals je kon zien moeten er veel draadjes worden aangesloten voor de motor. 2 draadjes voor 5 Volt en de GND. En dan 4 draadjes om de motor instructies te geven. 
+</br> Je kan de code hieronder gebruiken om de motor aan te sturen. Dit is complexe code! We raden het aan om een mentor om hulp te vragen als je dit beter wilt begrijpen. 
+
+```python
+import time
+import sys
+from gpiozero import OutputDevice as stepper
+IN1 = stepper(12)
+IN2 = stepper(16)
+IN3 = stepper(20)
+IN4 = stepper(21)
+stepPins = [IN1,IN2,IN3,IN4] # Motor GPIO pins</p><p>
+stepDir = -1        # Set to 1 for clockwise
+                           # Set to -1 for anti-clockwise
+mode = 1            # mode = 1: Low Speed ==> Higher Power
+                           # mode = 0: High Speed ==> Lower Power
+if mode:              # Low Speed ==> High Power
+  seq = [[1,0,0,1], # Define step sequence as shown in manufacturers datasheet
+             [1,0,0,0], 
+             [1,1,0,0],
+             [0,1,0,0],
+             [0,1,1,0],
+             [0,0,1,0],
+             [0,0,1,1],
+             [0,0,0,1]]
+else:                    # High Speed ==> Low Power 
+  seq = [[1,0,0,0], # Define step sequence as shown in manufacturers datasheet
+             [0,1,0,0],
+             [0,0,1,0],
+             [0,0,0,1]]
+stepCount = len(seq)
+if len(sys.argv)>1: # Read wait time from command line
+  waitTime = int(sys.argv[1])/float(1000)
+else:
+  waitTime = 0.004    # 2 miliseconds was the maximun speed got on my tests</p><p>stepCounter = 0</p><p>while True:                          # Start main loop
+  for pin in range(0,4):
+    xPin=stepPins[pin]          # Get GPIO
+    if seq[stepCounter][pin]!=0:
+      xPin.on()
+    else:
+      xPin.off()
+  stepCounter += stepDir
+  if (stepCounter >= stepCount):
+    stepCounter = 0
+  if (stepCounter < 0):
+    stepCounter = stepCount+stepDir</p><p>  time.sleep(waitTime)     # Wait before moving on
+```
 
 ## Afstandssensor
 
