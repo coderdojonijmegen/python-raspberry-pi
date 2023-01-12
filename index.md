@@ -196,16 +196,11 @@ Het aansturen van een motor is wat ingewikkelder dan het aansturen van de andere
 </br> Gelukkig hebben we een apart circuitje om ons daarmee te helpen. We gaan weer het circuitje nabouwen op de foto! 
 ![stappenmotor op Pi](stepper%20motor%20on%20Pi_bb.png)
 
-<<<<<<< HEAD
 Zoals je kan zien moeten er veel draadjes worden aangesloten voor de motor: 
 - twee draadjes voor 5 Volt en de GND;
 - vier draadjes om de motor instructies te sturen.
 
-</br> Je kan de code hieronder gebruiken om de motor aan te sturen. Dit is complexe code! We raden het aan om een mentor om hulp te vragen als je dit beter wilt begrijpen. 
-=======
-Zoals je kon zien moeten er veel draadjes worden aangesloten voor de motor. 2 draadjes voor 5 Volt en de GND. En dan 4 draadjes om de motor instructies te geven. 
 </br></br> Je kan de code hieronder gebruiken om de motor aan te sturen. Dit is complexe code! We raden het aan om een mentor om hulp te vragen als je dit beter wilt begrijpen. 
->>>>>>> main
 
 ```python
 import time
