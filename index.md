@@ -50,10 +50,11 @@ We gaan beginnen met het aanzetten van een led lampje met de Raspberry Pi. Hierv
 3. Een paar draadjes
 4. Een breadboard
 
-#
+</br>
 
 We gaan nu eerst de draadjes aansluiten, hoe dat moet is te zien op de afbeelding hieronder. We verbinden de 3.3 volt aansluiting op de Raspberry pi met de onderste rij op het breadboard. We verbinden de GROUND met de rij erboven op het breadboard. Daarna pluggen we de weerstand en het ledje in zoals het op de afbeelding staat. Als laatste verbinden we het weerstand en het ledje met de rijen op het breadboard, en het bruine draadje naar de controller pin op de raspberry pi. 
-#
+</br>
+</br>
 De pins op de afbeelding zijn hetzelfde als op jouw Raspberry Pi, je kan dus tellen waar de draadjes moeten!
 
 ![LED op Pi](LED%20on%20Pi_bb.png)
@@ -73,8 +74,9 @@ python3 script.py
 ```
 
 Het ledje zou nu moeten aangaan.
-#
-#
+</br>
+</br>
+
 We kunnen het ledje laten knipperen door de code in ons script te vervangen met:
 
 ```python
@@ -91,7 +93,8 @@ while True:
 Dit werkt door de led steeds aan en uit te zetten, en het programma te laten pauzeren tussendoor met sleep(1). Door het getal hier aan te passen kan je het sneller of langzamer laten knipperen. Probeer bijvoorbeeld sleep(5) uit!
 ## Een LED met een schakelaar
 De volgende stap is het toevoegen van een echte knop om de LED mee te bedienen. Hiervoor moeten we eerst het onderstaande circuit nabouwen. Dit circuit is al wat lastiger, vraag om hulp als je het nodig hebt!
-#
+</br>
+
 ![LED en schakelaar op Pi](LED%20and%20switch%20on%20Pi_bb.png)
 
 De knop is aangesloten op pin 2 (met het gele draadje op de afbeelding). Als je de knop indrukt is het circuit compleet en staat er spanning op pin 2. Dit kunnen wij uitlezen met python:
@@ -122,8 +125,9 @@ pause()
 ## Bewegingssensor en buzzer
 Behalve de led en knop zijn er natuurlijk veel meer apparaten die we kunnen aansluiten op een Raspberry PI. We kunnen bijvoorbeeld een buzzer (een simpele speaker) en een bewegingssensor gebruiken om een simpel alarm te bouwen. 
 Als het alarm iemand ziet bewegen gaat het af!
+</br>
+</br>
 
-#
 Net zoals eerst bouwen we eerst het circuit op de foto na, let goed op dat alle draadjes op de juiste plek zitten!
 
 ![bewegingssensor en buzzer op Pi](Motion%20and%20buzzer%20on%20Pi_bb.png)
