@@ -88,7 +88,7 @@ Het ledje zou nu moeten aangaan.
 </br>
 </br>
 
-We kunnen het ledje laten knipperen ons script te vervangen met het volgende script:
+We kunnen het ledje laten knipperen door ons script te vervangen met het volgende script:
 
 ```python
 from gpiozero import LED
