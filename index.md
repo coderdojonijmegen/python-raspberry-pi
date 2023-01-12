@@ -190,7 +190,7 @@ IN1 = stepper(12)
 IN2 = stepper(16)
 IN3 = stepper(20)
 IN4 = stepper(21)
-stepPins = [IN1, IN2, IN3, IN4]  # Motor GPIO pins</p><p>
+stepPins = [IN1, IN2, IN3, IN4]  # Motor GPIO pins
 stepDir = -1  # Set to 1 for clockwise
               # Set to -1 for anti-clockwise
               
@@ -228,8 +228,55 @@ else:
     if stepCounter < 0:
         stepCounter = stepCount + stepDir
         time.sleep(waitTime)  # Wait before moving on
-
 ```
+
+Omdat deze code zo lastig is leggen we het even in een paar onderdelen uit.
+
+</br></br>
+Eerst importeren we de juiste dingen. We importeren het OutputDevice, deze gebruiken om de motor aan te sturen. Dit hernoemen we naar stepper zodat we het zo kunnen noemen in de code. Net zoals eerst zeggen op welke pins de draadjes zitten aangesloten. We stoppen deze pins in een lijst, aangegeven met de [blokhaken].
+```python
+import time
+import sys
+from gpiozero import OutputDevice as stepper
+IN1 = stepper(12)
+IN2 = stepper(16)
+IN3 = stepper(20)
+IN4 = stepper(21)
+stepPins = [IN1, IN2, IN3, IN4]  # Motor GPIO pins
+```
+</br></br>
+
+Hierna configureren we een aantal dingen, met stepDir geven we de richting van de motor aan (linksom of rechtsom).
+Met de mode geven we aan hoe hard de motor draait. We kunnen kiezen tussen 1 en 0. 
+
+```python
+stepDir = -1  # Set to 1 for clockwise
+              # Set to -1 for anti-clockwise
+              
+mode = 1  # mode = 1: Low Speed ==> Higher Power
+          # mode = 0: High Speed ==> Lower Power
+```
+
+</br></br>
+
+Op basis van de mode kiezen we een sequence. Dit is een reeks signalen die we naar de motor sturen om te zeggen wat hij moet doen. 
+```python
+if mode:  # Low Speed ==> High Power
+    seq = [[1, 0, 0, 1],
+          [1, 0, 0, 0],
+          [1, 1, 0, 0],
+          [0, 1, 0, 0],
+          [0, 1, 1, 0],
+          [0, 0, 1, 0],
+          [0, 0, 1, 1],
+          [0, 0, 0, 1]]  # Define step sequence as shown in manufacturers datasheet
+else:
+    seq = [[1, 0, 0, 0], 
+           [0, 1, 0, 0], 
+           [0, 0, 1, 0], 
+           [0, 0, 0, 1]]  # Define step sequence as shown in manufacturers datasheet
+```
+
 
 ## Afstandssensor
 
