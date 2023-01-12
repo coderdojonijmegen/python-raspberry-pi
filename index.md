@@ -215,25 +215,26 @@ stepCount = len(seq)
 if len(sys.argv) > 1:  # Read wait time from command line
     waitTime = int(sys.argv[1]) / float(1000)
 else:
-    waitTime = 0.004  # 2 miliseconds was the maximun speed got on my tests</p><p>stepCounter = 0</p><p>while True:                          # Start main loop
-    for pin in range(0, 4):
-        xPin = stepPins[pin]  # Get GPIO
-        if seq[stepCounter][pin] != 0:
-            xPin.on()
-        else:
-            xPin.off()
-    stepCounter += stepDir
-    if stepCounter >= stepCount:
-        stepCounter = 0
-    if stepCounter < 0:
-        stepCounter = stepCount + stepDir
+    waitTime = 0.004 
+    while True:                          # Start main loop
+        for pin in range(0, 4):
+            xPin = stepPins[pin]  # Get GPIO
+            if seq[stepCounter][pin] != 0:
+                xPin.on()
+            else:
+                xPin.off()
+        stepCounter += stepDir
+        if stepCounter >= stepCount:
+            stepCounter = 0
+        if stepCounter < 0:
+            stepCounter = stepCount + stepDir
         time.sleep(waitTime)  # Wait before moving on
 ```
 
 Omdat deze code zo lastig is leggen we het even in een paar onderdelen uit.
 
 </br></br>
-Eerst importeren we de juiste dingen. We importeren het OutputDevice, deze gebruiken om de motor aan te sturen. Dit hernoemen we naar stepper zodat we het zo kunnen noemen in de code. Net zoals eerst zeggen op welke pins de draadjes zitten aangesloten. We stoppen deze pins in een lijst, aangegeven met de [blokhaken].
+Eerst importeren we de juiste dingen. We importeren het OutputDevice, deze gebruiken we om de motor aan te sturen. Dit hernoemen we naar stepper zodat we het zo kunnen noemen in de code. Net zoals eerst zeggen op welke pins de draadjes zitten aangesloten. We stoppen deze pins in een lijst (stepPins), aangegeven met de [blokhaken].
 ```python
 import time
 import sys
@@ -276,7 +277,31 @@ else:
            [0, 0, 1, 0], 
            [0, 0, 0, 1]]  # Define step sequence as shown in manufacturers datasheet
 ```
+</br></br>
+Als laatste gaan we een voor een de signalen in de sequence (reeks) naar de motor te sturen. 
+Dit doen we in een while true, een oneindige loop. Hierdoor blijft de motor doordraaien.
+</br>
+We sturen de signalen naar alle 4 pins gebaseerd op de eerste regel in de sequence. Daarna pakken we de volgende regel en sturen die ook allemaal naar de pins. Hierdoor gaat de motor draaien.
 
+```python
+if len(sys.argv) > 1:  # Read wait time from command line
+    waitTime = int(sys.argv[1]) / float(1000)
+else:
+    waitTime = 0.004 
+    while True:                          # Start main loop
+        for pin in range(0, 4):
+            xPin = stepPins[pin]  # Get GPIO
+            if seq[stepCounter][pin] != 0:
+                xPin.on()
+            else:
+                xPin.off()
+        stepCounter += stepDir
+        if stepCounter >= stepCount:
+            stepCounter = 0
+        if stepCounter < 0:
+            stepCounter = stepCount + stepDir
+        time.sleep(waitTime)  # Wait before moving on
+```
 
 ## Afstandssensor
 
