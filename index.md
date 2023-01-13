@@ -443,6 +443,14 @@ Omdat het geluid heen-en-weer gaat, wordt het resultaat door 2 gedeeld:
 puls_duur = puls_eind_tijd - puls_start_tijd
 afstand = round(puls_duur * GELUIDSSNELHEID / 2, 2)
 ```
+### Zelf proberen
+
+De code meet nu een enkele keer de afstand en sluit dan af. Kun je de code zo aanpassen dat de code de meting 
+bijvoorbeeld iedere seconde herhaalt en je kunt zien dat de afstand varieert als je je hand beweegt?  
+Is er een maximum afstand die je kunt meten?
+
+Als je de afstand meerdere keren achter elkaar meet, zou je ook kunnen uitrekenen wat de snelheid was van de beweging
+tussen de twee metingen. Hoe zou je dat kunnen doen?
 
 ## Bron
 
