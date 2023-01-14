@@ -73,7 +73,8 @@ Dit dit we in Python als volgt:
 ```python
 from gpiozero import LED
 led = LED(18)
-led.on()
+while True:
+    led.on()
 ```
 
 De bovenstaande code begint met het importeren van de code (`gpiozero`) om de pin te besturen. 
