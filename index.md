@@ -4,7 +4,7 @@ date: 2023-01-07T15:31:06+01:00
 draft: false
 toc: true
 headercolor: "teal-background"
-taal: python
+onderwerp: Python
 ---
 
 Een Raspberry Pi is een mini-computer waar je allerlei leuke dingen mee kunt doen. 
