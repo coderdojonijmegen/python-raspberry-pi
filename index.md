@@ -150,6 +150,18 @@ Als het alarm iemand ziet bewegen dan gaat het af!
 
 Zoals voorheen bouwen we eerst het circuit op de foto na. Let goed op dat alle draadjes op de juiste plek zitten!
 
+![aansluitingen bewegingssensor](pir-sensor-aansluiten.jpg)
+
+Aansluiten van de PIR sensor boven en die van de buzzer beneden:
+
+![buzzer](buzzer.jpg)
+
+{{< verdieping >}}
+**Let op**: helaas zijn we er gisteren achter gekomen dat we maar 1 exemplaar van deze buzzer hebben... ☹️  
+Vraag één van de mentoren of je het even mag gebruiken om te testen. Gebruik verder het LEDje om te zien of de sensor
+beweging heeft gedetecteerd.
+{{< /verdieping >}}
+
 ![bewegingssensor en buzzer op Pi](Motion%20and%20buzzer%20on%20Pi_bb.png)
 
 Het circuit werkt als volgt: als de bewegingssensor iets ziet bewegen, geeft deze een stroompje af op het draadje dat we hebben aangesloten op de pins van de Raspberry Pi. 
@@ -210,49 +222,54 @@ Zoals je kan zien moeten er veel draadjes worden aangesloten voor de motor:
 import time
 import sys
 from gpiozero import OutputDevice as stepper
+
 IN1 = stepper(12)
 IN2 = stepper(16)
 IN3 = stepper(20)
 IN4 = stepper(21)
+
 stepPins = [IN1, IN2, IN3, IN4]  # Motor GPIO pins
 stepDir = -1  # Set to 1 for clockwise
               # Set to -1 for anti-clockwise
-              
 mode = 1  # mode = 1: Low Speed ==> Higher Power
           # mode = 0: High Speed ==> Lower Power
 
 if mode:  # Low Speed ==> High Power
     seq = [[1, 0, 0, 1],
-          [1, 0, 0, 0],
-          [1, 1, 0, 0],
-          [0, 1, 0, 0],
-          [0, 1, 1, 0],
-          [0, 0, 1, 0],
-          [0, 0, 1, 1],
-          [0, 0, 0, 1]]  # Define step sequence as shown in manufacturers datasheet
+            [1, 0, 0, 0],
+            [1, 1, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 1, 0],
+            [0, 0, 1, 0],
+            [0, 0, 1, 1],
+            [0, 0, 0, 1]]  # Define step sequence as shown in manufacturers datasheet
 else:
     seq = [[1, 0, 0, 0], 
-           [0, 1, 0, 0], 
-           [0, 0, 1, 0], 
-           [0, 0, 0, 1]]  # Define step sequence as shown in manufacturers datasheet
+            [0, 1, 0, 0], 
+            [0, 0, 1, 0], 
+            [0, 0, 0, 1]]  # Define step sequence as shown in manufacturers datasheet
+
 stepCount = len(seq)
+stepCounter = 0
 if len(sys.argv) > 1:  # Read wait time from command line
     waitTime = int(sys.argv[1]) / float(1000)
 else:
     waitTime = 0.004 
-    while True:                          # Start main loop
-        for pin in range(0, 4):
-            xPin = stepPins[pin]  # Get GPIO
-            if seq[stepCounter][pin] != 0:
-                xPin.on()
-            else:
-                xPin.off()
-        stepCounter += stepDir
-        if stepCounter >= stepCount:
-            stepCounter = 0
-        if stepCounter < 0:
-            stepCounter = stepCount + stepDir
-        time.sleep(waitTime)  # Wait before moving on
+
+while True:                          # Start main loop
+   for pin in range(0, 4):
+      xPin = stepPins[pin]  # Get GPIO
+      if seq[stepCounter][pin] != 0:
+          xPin.on()
+      else:
+          xPin.off()
+   stepCounter += stepDir
+
+   if stepCounter >= stepCount:
+       stepCounter = 0
+   if stepCounter < 0:
+       stepCounter = stepCount + stepDir
+   time.sleep(waitTime)  # Wait before moving on
 ```
 
 Omdat deze code zo lastig is leggen we het even in een paar onderdelen uit.
@@ -288,18 +305,18 @@ Op basis van de mode kiezen we een sequence. Dit is een reeks signalen die we na
 ```python
 if mode:  # Low Speed ==> High Power
     seq = [[1, 0, 0, 1],
-          [1, 0, 0, 0],
-          [1, 1, 0, 0],
-          [0, 1, 0, 0],
-          [0, 1, 1, 0],
-          [0, 0, 1, 0],
-          [0, 0, 1, 1],
-          [0, 0, 0, 1]]  # Define step sequence as shown in manufacturers datasheet
+            [1, 0, 0, 0],
+            [1, 1, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 1, 0],
+            [0, 0, 1, 0],
+            [0, 0, 1, 1],
+            [0, 0, 0, 1]]  # Define step sequence as shown in manufacturers datasheet
 else:
     seq = [[1, 0, 0, 0], 
-           [0, 1, 0, 0], 
-           [0, 0, 1, 0], 
-           [0, 0, 0, 1]]  # Define step sequence as shown in manufacturers datasheet
+            [0, 1, 0, 0], 
+            [0, 0, 1, 0], 
+            [0, 0, 0, 1]]  # Define step sequence as shown in manufacturers datasheet
 ```
 </br></br>
 Als laatste gaan we een voor een de signalen in de sequence (reeks) naar de motor te sturen. 
@@ -312,19 +329,21 @@ if len(sys.argv) > 1:  # Read wait time from command line
     waitTime = int(sys.argv[1]) / float(1000)
 else:
     waitTime = 0.004 
-    while True:                          # Start main loop
-        for pin in range(0, 4):
-            xPin = stepPins[pin]  # Get GPIO
-            if seq[stepCounter][pin] != 0:
-                xPin.on()
-            else:
-                xPin.off()
-        stepCounter += stepDir
-        if stepCounter >= stepCount:
-            stepCounter = 0
-        if stepCounter < 0:
-            stepCounter = stepCount + stepDir
-        time.sleep(waitTime)  # Wait before moving on
+
+while True:                          # Start main loop
+   for pin in range(0, 4):
+      xPin = stepPins[pin]  # Get GPIO
+      if seq[stepCounter][pin] != 0:
+          xPin.on()
+      else:
+          xPin.off()
+   stepCounter += stepDir
+
+   if stepCounter >= stepCount:
+       stepCounter = 0
+   if stepCounter < 0:
+       stepCounter = stepCount + stepDir
+   time.sleep(waitTime)  # Wait before moving on
 ```
 
 ## Afstandssensor
