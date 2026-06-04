@@ -46,7 +46,7 @@ sudo python3 <scriptnaam>.py
 
 Als het script loopt, kun je het onderbreken door toetsencombinatie CTRL-C in te drukken.
 
-Als je het commando opnieuw wilt uitvoeren, kun je pijltje-omhoog op je toestenbord indrukken
+Als je het commando opnieuw wilt uitvoeren, kun je pijltje-omhoog op je toetsenbord indrukken
 om het laatst uitgevoerde commando opnieuw uit te voeren.
 
 ## Een led aansturen
